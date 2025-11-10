@@ -1,0 +1,43 @@
+{
+  "name": "booking-service",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx server",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "vite build --outDir dist/client",
+    "build:server": "vite build --ssr src/entry-server.ts --outDir dist/server",
+    "preview": "cross-env NODE_ENV=production tsx server",
+    "check": "vue-tsc"
+  },
+  "dependencies": {
+    "@primeuix/themes": "1.2.5",
+    "bcryptjs": "3.0.3",
+    "compression": "1.8.1",
+    "cookie-parser": "1.4.7",
+    "dotenv": "17.2.3",
+    "express": "5.1.0",
+    "jsonwebtoken": "9.0.2",
+    "pg": "8.16.3",
+    "primeicons": "7.0.0",
+    "primevue": "4.4.1",
+    "sirv": "3.0.2",
+    "tsx": "4.20.6",
+    "vue": "3.5.24"
+  },
+  "devDependencies": {
+    "@types/compression": "1.8.1",
+    "@types/cookie-parser": "1.4.10",
+    "@types/express": "5.0.5",
+    "@types/jsonwebtoken": "9.0.10",
+    "@types/node": "24.10.0",
+    "@types/pg": "8.15.6",
+    "@vitejs/plugin-vue": "6.0.1",
+    "cross-env": "10.1.0",
+    "sass-embedded": "1.93.3",
+    "typescript": "5.9.3",
+    "vite": "7.2.2",
+    "vue-tsc": "3.1.3"
+  }
+}

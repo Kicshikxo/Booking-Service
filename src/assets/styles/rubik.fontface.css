@@ -1,0 +1,8 @@
+* {
+  font-family: 'Rubik';
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik-Regular.woff2') format('woff2');
+}
