@@ -1,6 +1,3 @@
--- DROP TABLE IF EXISTS bookings CASCADE;
--- DROP TABLE IF EXISTS events CASCADE;
--- DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE
   IF NOT EXISTS users (
     user_id uuid DEFAULT gen_random_uuid () PRIMARY KEY,

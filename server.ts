@@ -1,15 +1,14 @@
 import compression from 'compression'
 import cookieParser from 'cookie-parser'
-import express, { Request, Response } from 'express'
+import express, { Response } from 'express'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import sirv from 'sirv'
 import { createServer, ViteDevServer } from 'vite'
 
-import authRouter from './server/controllers/auth.controller'
-import bookingsRouter from './server/controllers/bookings.controller'
-import eventsRouter from './server/controllers/events.controller'
+import appRouter from './server/controllers/app.controller'
 import { initDatabase } from './server/database'
+import { authMiddleware, AuthRequest } from './server/middleware/auth.middleware'
 
 const isProduction = process.env.NODE_ENV === 'production'
 const port = process.env.PORT || 3000
@@ -33,9 +32,9 @@ if (isProduction) {
   app.use(vite.middlewares)
 }
 
-async function handleRequest(request: Request, response: Response) {
+async function handleRequest(request: AuthRequest, response: Response) {
   try {
-    const url = request.originalUrl.replace(base, '')
+    const url = request.user ? request.originalUrl.replace(base, '') : 'auth'
 
     const template = isProduction
       ? await fs.readFile('dist/client/index.html', 'utf-8')
@@ -58,11 +57,8 @@ async function handleRequest(request: Request, response: Response) {
   }
 }
 
-app.use('/api/auth', authRouter)
-app.use('/api/events', eventsRouter)
-app.use('/api/bookings', bookingsRouter)
-
-app.use('*all', handleRequest)
+app.use(appRouter)
+app.use('*all', authMiddleware({ soft: true }), handleRequest)
 
 initDatabase()
   .catch((error) => {

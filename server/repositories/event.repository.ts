@@ -20,7 +20,7 @@ export async function createEvent(
   return rows[0]
 }
 
-export async function getEventById(eventId: number) {
+export async function getEventById(eventId: string) {
   const { rows } = await pool.query<Event>('SELECT * FROM events WHERE event_id = $1', [eventId])
   return rows[0]
 }

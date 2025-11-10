@@ -11,7 +11,7 @@ import {
 
 const router = Router()
 
-router.get('/list', authMiddleware, async (request: AuthRequest, response: Response) => {
+router.get('/list', authMiddleware(), async (request: AuthRequest, response: Response) => {
   try {
     const events = await getEvents()
 
@@ -22,7 +22,7 @@ router.get('/list', authMiddleware, async (request: AuthRequest, response: Respo
   }
 })
 
-router.post('/create', authMiddleware, async (request: AuthRequest, response: Response) => {
+router.post('/', authMiddleware(), async (request: AuthRequest, response: Response) => {
   try {
     const { title, description, totalSeats, plannedAt } = request.body ?? {}
 
@@ -40,9 +40,10 @@ router.post('/create', authMiddleware, async (request: AuthRequest, response: Re
   }
 })
 
-router.patch('/update', authMiddleware, async (request: AuthRequest, response: Response) => {
+router.patch('/:id', authMiddleware(), async (request: AuthRequest, response: Response) => {
   try {
-    const { eventId, title, description, totalSeats, plannedAt } = request.body ?? {}
+    const eventId = request.params.id
+    const { title, description, totalSeats, plannedAt } = request.body ?? {}
 
     const event = await getEventById(eventId)
     if (!event) {
@@ -72,9 +73,9 @@ router.patch('/update', authMiddleware, async (request: AuthRequest, response: R
   }
 })
 
-router.delete('/delete', authMiddleware, async (request: AuthRequest, response: Response) => {
+router.delete('/:id', authMiddleware(), async (request: AuthRequest, response: Response) => {
   try {
-    const { eventId } = request.body ?? {}
+    const eventId = request.params.id
 
     const event = await getEventById(eventId)
     if (!event) {

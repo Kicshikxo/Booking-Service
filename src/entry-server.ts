@@ -1,10 +1,13 @@
 import { renderToString } from 'vue/server-renderer'
 import { createApp } from './main'
 
-export async function render(_url: string) {
-  const { app } = createApp()
+export async function render(url: string) {
+  const { app, router } = createApp()
 
-  const ctx = {}
+  await router.push(url)
+  await router.isReady()
+
+  const ctx: any = {}
   const body = await renderToString(app, ctx)
 
   return { body }

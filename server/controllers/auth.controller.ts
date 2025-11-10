@@ -60,7 +60,7 @@ router.post('/sign-out', (request: Request, response: Response) => {
   response.status(200).json({ message: 'OK' })
 })
 
-router.post('/me', authMiddleware, (request: AuthRequest, response: Response) => {
+router.get('/check', authMiddleware(), (request: AuthRequest, response: Response) => {
   response.json({ user: request.user })
 })
 

@@ -2,7 +2,10 @@ import { createApp } from './main'
 
 import 'primeicons/primeicons.css'
 import './assets/styles/rubik.fontface.css'
+import './assets/styles/tailwind.css'
 
-const { app } = createApp()
+const { app, router } = createApp()
 
-app.mount('#app')
+router.isReady().then(() => {
+  app.mount('#app')
+})

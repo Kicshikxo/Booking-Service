@@ -9,9 +9,9 @@ import { getEventById } from '../repositories/event.repository'
 
 const router = Router()
 
-router.post('/reserve', authMiddleware, async (request: AuthRequest, response: Response) => {
+router.post('/reserve/:id', authMiddleware(), async (request: AuthRequest, response: Response) => {
   try {
-    const { eventId } = request.body ?? {}
+    const eventId = request.params.id
 
     const event = await getEventById(eventId)
     if (!event) {
@@ -32,27 +32,31 @@ router.post('/reserve', authMiddleware, async (request: AuthRequest, response: R
   }
 })
 
-router.delete('/unreserve', authMiddleware, async (request: AuthRequest, response: Response) => {
-  try {
-    const { eventId } = request.body ?? {}
+router.delete(
+  '/reserve/:id',
+  authMiddleware(),
+  async (request: AuthRequest, response: Response) => {
+    try {
+      const eventId = request.params.id
 
-    const event = await getEventById(eventId)
-    if (!event) {
-      return response.status(404).json({ error: 'EVENT NOT FOUND' })
+      const event = await getEventById(eventId)
+      if (!event) {
+        return response.status(404).json({ error: 'EVENT NOT FOUND' })
+      }
+
+      const existingBooking = await getBookingByUserIdAndEventId(request.user!.userId, eventId)
+      if (!existingBooking) {
+        return response.status(400).json({ error: 'NOT BOOKED' })
+      }
+
+      await deleteBookingById(existingBooking.booking_id)
+
+      response.status(200).json({ message: 'OK' })
+    } catch (error: any) {
+      console.log(error)
+      response.status(500).json({ error: error.message })
     }
-
-    const existingBooking = await getBookingByUserIdAndEventId(request.user!.userId, eventId)
-    if (!existingBooking) {
-      return response.status(400).json({ error: 'NOT BOOKED' })
-    }
-
-    await deleteBookingById(existingBooking.booking_id)
-
-    response.status(200).json({ message: 'OK' })
-  } catch (error: any) {
-    console.log(error)
-    response.status(500).json({ error: error.message })
-  }
-})
+  },
+)
 
 export default router
