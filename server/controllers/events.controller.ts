@@ -55,7 +55,7 @@ router.patch('/:id', authMiddleware(), async (request: AuthRequest, response: Re
     }
 
     const existingEvent = await getEventByTitle(title)
-    if (existingEvent.event_id !== eventId && existingEvent) {
+    if (existingEvent && existingEvent.event_id !== eventId) {
       return response.status(400).json({ error: 'EVENT TITLE ALREADY EXISTS' })
     }
 
