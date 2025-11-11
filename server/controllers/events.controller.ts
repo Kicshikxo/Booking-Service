@@ -1,11 +1,12 @@
 import { Response, Router } from 'express'
 import { authMiddleware, AuthRequest } from '../middleware/auth.middleware'
+import { countEventBookings } from '../repositories/booking.repository'
 import {
   createEvent,
   deleteEventById,
   getEventById,
   getEventByTitle,
-  getEvents,
+  getEventsWithBookingsAndUsers,
   updateEventById,
 } from '../repositories/event.repository'
 
@@ -13,7 +14,7 @@ const router = Router()
 
 router.get('/list', authMiddleware(), async (request: AuthRequest, response: Response) => {
   try {
-    const events = await getEvents()
+    const events = await getEventsWithBookingsAndUsers()
 
     response.status(200).json(events)
   } catch (error: any) {
@@ -54,16 +55,21 @@ router.patch('/:id', authMiddleware(), async (request: AuthRequest, response: Re
     }
 
     const existingEvent = await getEventByTitle(title)
-    if (existingEvent) {
+    if (existingEvent.event_id !== eventId && existingEvent) {
       return response.status(400).json({ error: 'EVENT TITLE ALREADY EXISTS' })
+    }
+
+    const eventBookings = await countEventBookings(eventId)
+    if (totalSeats && totalSeats - eventBookings <= 0) {
+      return response.status(400).json({ error: 'NOT ENOUGH SEATS' })
     }
 
     const updatedEvent = await updateEventById(
       eventId,
       title ?? event.title,
       description ?? event.description,
-      totalSeats ?? event.total_seats,
-      plannedAt ?? event.planned_at,
+      totalSeats !== undefined ? totalSeats : event.total_seats,
+      plannedAt !== undefined ? plannedAt : event.planned_at,
     )
 
     response.status(200).json(updatedEvent)

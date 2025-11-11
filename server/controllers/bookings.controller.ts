@@ -1,6 +1,7 @@
 import { Response, Router } from 'express'
 import { authMiddleware, AuthRequest } from '../middleware/auth.middleware'
 import {
+  countEventBookings,
   createBooking,
   deleteBookingById,
   getBookingByUserIdAndEventId,
@@ -21,6 +22,11 @@ router.post('/reserve/:id', authMiddleware(), async (request: AuthRequest, respo
     const existingBooking = await getBookingByUserIdAndEventId(request.user!.userId, eventId)
     if (existingBooking) {
       return response.status(400).json({ error: 'ALREADY BOOKED' })
+    }
+
+    const eventBookings = await countEventBookings(eventId)
+    if (event.total_seats && event.total_seats - eventBookings <= 0) {
+      return response.status(400).json({ error: 'NO SEATS LEFT' })
     }
 
     const booking = await createBooking(eventId, request.user!.userId)

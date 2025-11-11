@@ -118,7 +118,7 @@ async function handleSignIn() {
   try {
     await signIn(signInForm.email, signInForm.password)
     await router.push('/')
-  } catch (error: any) {
+  } catch {
     alert('Неверная почта или пароль')
   } finally {
     signInForm.loading = false
@@ -130,7 +130,7 @@ async function handleSignUp() {
   try {
     await signUp(signUpForm.email, signUpForm.password)
     await router.push('/')
-  } catch (error: any) {
+  } catch {
     alert('Ошибка регистрации')
   } finally {
     signUpForm.loading = false

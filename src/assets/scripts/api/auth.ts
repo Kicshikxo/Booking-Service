@@ -1,29 +1,37 @@
 import axios from 'axios'
+import { clearSession, setSession } from '../../../composables/useSession'
 
 export async function checkAuth() {
   try {
     const response = await axios.get('/api/auth/check')
 
+    setSession(response.data.user)
+
     return response.status === 200
   } catch (error: any) {
-    return error.status !== 401
+    if (error.response.status === 401) {
+      clearSession()
+      return false
+    }
+
+    return true
   }
 }
 
 export async function signUp(email: string, password: string) {
-  const response = await axios.post('/api/auth/sign-up', { email, password })
+  await axios.post('/api/auth/sign-up', { email, password })
 
-  return !!response.data.token
+  return await checkAuth()
 }
 
 export async function signIn(email: string, password: string) {
-  const response = await axios.post('/api/auth/sign-in', { email, password })
+  await axios.post('/api/auth/sign-in', { email, password })
 
-  return !!response.data.token
+  return await checkAuth()
 }
 
 export async function signOut() {
-  const response = await axios.post('/api/auth/sign-out')
+  await axios.post('/api/auth/sign-out')
 
-  return response.status === 200
+  return !(await checkAuth())
 }
