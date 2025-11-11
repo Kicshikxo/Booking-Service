@@ -42,7 +42,7 @@
                       </div>
                     </template>
                   </Card>
-                  <div class="flex gap-4">
+                  <div class="flex flex-col sm:flex-row gap-4">
                     <Button
                       v-if="
                         !event.bookings.some(
